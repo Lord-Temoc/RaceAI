@@ -1,4 +1,5 @@
 import pygame
+import pygame.gfxdraw
 
 # pygame setup
 pygame.init()
@@ -59,18 +60,18 @@ while running:
             for circle in circles:
                 pygame.draw.circle(screen, circle["color"], circle["pos"], 10)
 
-            if len(circles) > 1:
+            if len(circles) > 2:
                 circle_pos = []
 
                 for circle in circles:
                     circle_pos.append(circle["pos"])
 
-                pygame.draw.lines(screen, line_colors, False, circle_pos, line_width)
+                # create a line between the circles
+                line = pygame.draw.lines(screen, line_colors, False, circle_pos, line_width)
 
         else:
-            pygame.draw.lines(screen, line_colors, False, line_points, line_width)
             pygame.draw.circle(screen, (255, 0, 0), starting_pos, 10)
-            pygame.draw.circle(screen, (255, 0, 0), line_points[-1], 10)
+            pygame.draw.circle(screen, (255, 0, 0), ending_pos, 10)
 
             # Check if the line is finished
             if abs(mouse_pos[0] - ending_pos[0]) <= 10 and abs(mouse_pos[1] - ending_pos[1]) <= 10:
@@ -89,9 +90,19 @@ while running:
 
             circles = []
     else:
-        # export the line_points to an image
+        # create a line between the circles
         pygame.draw.lines(screen, line_colors, False, line_points, line_width)
+        # create a circle at every point in the line
+        # for point in line_points:
+        #     pygame.draw.circle(screen, (0, 0, 255), point, 10)
+
+        # for every white pixel in the line, create a circle at the center of the pixel
+        for x in range(0, 1280):
+            for y in range(0, 720):
+                if screen.get_at((x, y)) == (255, 255, 255, 255):
+                    pygame.draw.circle(screen, (0, 0, 255), (x, y), 10)
 
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(30)
+
 pygame.quit()
